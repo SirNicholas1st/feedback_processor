@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Customer satisfaction survey</h1>
+
+    <form action="/submit" method="POST">
+        <label for="serviceRating">How satisfied were you with the service:</label>
+        <select id="serviceRating" name="serviceRating">
+          <option value="0">0 - Not satisfied</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5 - Very satisfied</option>
+        </select>
+      
+        <br><br>
+      
+        <label for="productRating">How satisfied were you with the product?:</label>
+        <select id="productRating" name="productRating">
+          <option value="0">0 - Not satisfied</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5 - Very satisfied</option>
+        </select>
+      
+        <br><br>
+      
+        <label for="comments">Additional comments:</label>
+        <textarea name="comments" id="comments" cols="30" rows="10"></textarea>
+      
+        <br><br>
+      
+        <input type="submit" value="Submit">
+      </form>
+</body>
+</html>
