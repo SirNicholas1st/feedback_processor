@@ -18,12 +18,12 @@ WIP This repository contains a simple Flask application that serves as a custome
 5. Use windows search to find "Edit the system environment variables"
 6. Select Environment variables
 
-![EnvVars](pics/environment_vars_1.png)
+![EnvVars](Pics/environment_vars_1.png)
 
 7. Create the following variables: JAVA_HOME path: jdk folder, HADOOP_HOME path: the hadoop folder you created, SPARK_HOME path: the extracted folder under the created spark folder, PYSPARK_HOME path: your python folder + python.exe for example D:\Python\python.exe.
 8. Under system variables select "Path"
-![path](pics/path.png)
+![path](Pics/path.png)
 9. Click edit and add the following paths: %HADOOP_HOME%/bin, %SPARK_HOME%/bin
 10. Verify the installation by opening a cmd and starting a spark shell with the command "spark-shell". The output should be the following:
-![SparkShell](pics/spark_shell.png)
+![SparkShell](Pics/spark_shell.png)
 NOTE: The start up might take a while and if the the command doesnt work, run the cmd as and admin.
