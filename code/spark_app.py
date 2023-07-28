@@ -1,7 +1,8 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col, from_json
+from pyspark.sql.functions import col, from_json, first
 from pyspark.sql.types import StructType, StringType
 from cassandra.cluster import Cluster
+from datetime import datetime
 import sys
 
 APP_NAME = "feedback_processor"
@@ -42,23 +43,35 @@ def process_kafka_data(df, epoch):
     parsed_df = df.withColumn("parsed_value", from_json(col("value").cast("string"), schema))
     parsed_df = parsed_df.withColumn("key", col("key").cast("string"))
 
-    product_rating = parsed_df.select(col("parsed_value.product_rating"))
-    service_rating = parsed_df.select(col("parsed_value.service_rating"))
-    comments = parsed_df.select(col("parsed_value.comments"))
-    timestamp = parsed_df.select(col("key"))
-
-    # showing the values in console for testing purposes
-    product_rating.show()
-    service_rating.show()
-    comments.show()
-    timestamp.show()
+    product_rating = parsed_df.select(col("parsed_value.product_rating")).collect()
+    service_rating = parsed_df.select(col("parsed_value.service_rating")).collect()
+    comments = parsed_df.select(col("parsed_value.comments")).collect()
+    timestamp_str = parsed_df.select(col("key")).collect()
+    
 
 
-    # TODO call the write function
+    write_data_to_cassandra(p_rating = product_rating, s_rating = service_rating,
+                           comments = comments, timestamp_str = timestamp_str)
 
-def write_data_to_cassandra():
-    # TODO logic to add the data to the Cassandra table, NOTE: timestamp is in string format, will probably throw an error when trying to insert it as it is now
-    pass
+def write_data_to_cassandra(p_rating, s_rating, comments, timestamp_str):
+    
+    # Checking if there is data to write, the p_rating is a required field in the form so it should always be present.
+    if len(p_rating) == 0:
+        print("No data to write.")
+        return
+    
+    timestamp_dt = datetime.strptime(timestamp_str[0][0], "%Y-%m-%dT%H:%M:%S.%f")
+
+    insert_statement = f"""INSERT INTO {CASSANDRA_TABLE}
+                            (timestamp, productRating, serviceRating, comments)
+                            VALUES (?, ?, ?, ?);
+                            """
+    prepared_insert_statement = cassandra_session.prepare(insert_statement)
+
+    # TODO The values, excluding timestamp dt, still in list format. Need to convert them to the actual values in the correct dtype.
+    cassandra_session.execute(prepared_insert_statement, (timestamp_dt, p_rating, s_rating, comments))
+    print("Data inserted")
+    return 
 
 
 query = df.writeStream.foreachBatch(process_kafka_data).start()
