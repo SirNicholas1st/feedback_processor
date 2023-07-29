@@ -1,5 +1,5 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col, from_json, first
+from pyspark.sql.functions import col, from_json
 from pyspark.sql.types import StructType, StringType
 from cassandra.cluster import Cluster
 from datetime import datetime
@@ -48,8 +48,6 @@ def process_kafka_data(df, epoch):
     comments = parsed_df.select(col("parsed_value.comments")).collect()
     timestamp_str = parsed_df.select(col("key")).collect()
     
-
-
     write_data_to_cassandra(p_rating = product_rating, s_rating = service_rating,
                            comments = comments, timestamp_str = timestamp_str)
 
@@ -68,11 +66,11 @@ def write_data_to_cassandra(p_rating, s_rating, comments, timestamp_str):
                             """
     prepared_insert_statement = cassandra_session.prepare(insert_statement)
 
-    # TODO The values, excluding timestamp dt, still in list format. Need to convert them to the actual values in the correct dtype.
-    cassandra_session.execute(prepared_insert_statement, (timestamp_dt, p_rating, s_rating, comments))
+    cassandra_session.execute(prepared_insert_statement, 
+                            (timestamp_dt, int(p_rating[0][0]), 
+                            int(s_rating[0][0]), comments[0][0]))
     print("Data inserted")
     return 
-
 
 query = df.writeStream.foreachBatch(process_kafka_data).start()
 query.awaitTermination()
