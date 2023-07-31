@@ -1,5 +1,7 @@
-# feedback_processor
+# Project Overview
 WIP This repository contains a simple Flask application that serves as a customer feedback form. The submitted data is sent to a Kafka topic. The Kafka consumer, implemented as a Spark application, processes the data and writes it to a Cassandra table for further analysis.
+
+The ultimate goal of the project is to serve as a simple example on how to use Pyspark to create a consumer and how to read data from Casssandra.
 
 
 # Setup 
@@ -22,8 +24,12 @@ WIP This repository contains a simple Flask application that serves as a custome
 
 7. Create the following variables: JAVA_HOME path: jdk folder, HADOOP_HOME path: the hadoop folder you created, SPARK_HOME path: the extracted folder under the created spark folder, PYSPARK_HOME path: your python folder + python.exe for example D:\Python\python.exe.
 8. Under system variables select "Path"
+
 ![path](Pics/path.png)
+
 9. Click edit and add the following paths: %HADOOP_HOME%/bin, %SPARK_HOME%/bin
 10. Verify the installation by opening a cmd and starting a spark shell with the command "spark-shell". The output should be the following:
+
 ![SparkShell](Pics/spark_shell.png)
+
 NOTE: The start up might take a while and if the the command doesnt work, run the cmd as and admin.
