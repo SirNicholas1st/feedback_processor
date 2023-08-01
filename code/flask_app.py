@@ -14,7 +14,7 @@ except Exception as e:
     print(f"Error --> {e}")
     sys.exit()
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="static")
 
 @app.route("/")
 def form():
@@ -32,7 +32,7 @@ def submit():
 
     producer.send(topic = KAFKA_TOPIC, key = timestamp, value = value_dict)
     
-    return "Thank you"
+    return render_template("submitted.html")
 
 
 if __name__ == "__main__":
